@@ -1,4 +1,4 @@
-import "FungibleToken"
+// NOTE: Replace 0xFUNGIBLETOKENADDRESS and 0xXINSUREADDRESS with actual deployed addresses in your flow.json or emulator
 import XINSURE from "./Xinsure.cdc"
 
 /// InsurancePool Contract - Central contract managing pooled capital,
@@ -49,7 +49,7 @@ access(all) contract InsurancePool {
     access(all) resource Pool {
         
         /// Internal vault holding FungibleToken tokens (placeholder for USDFC)
-        access(self) let tokenVault: @{FungibleToken.Vault}
+        access(self) let tokenVault: @XINSURE.Vault
         
         /// Capability to mint and burn xINSURE tokens
         access(self) let xInsureMinterCap: Capability<&XINSURE.Minter>
@@ -67,7 +67,7 @@ access(all) contract InsurancePool {
         /// @param lpAddress: Address of the liquidity provider
         /// @param tokenVault: FungibleToken vault containing the deposit
         /// @return xINSURE vault with minted tokens
-        access(all) fun depositCapital(lpAddress: Address, tokenVault: @{FungibleToken.Vault}): @XINSURE.Vault {
+        access(all) fun depositCapital(lpAddress: Address, tokenVault: @XINSURE.Vault): @XINSURE.Vault {
             // Pre-conditions
             if !InsurancePool.poolActive {
                 panic("Pool is not active")
@@ -82,6 +82,7 @@ access(all) contract InsurancePool {
                 panic("Deposit amount below minimum required")
             }
             
+
             let depositAmount = tokenVault.balance
             
             // Check if deposit would exceed max pool size
@@ -109,13 +110,14 @@ access(all) contract InsurancePool {
             
             return <-xInsureVault
         }
+        
 
         /// Redeem capital by burning xINSURE tokens
         /// 
         /// @param lpAddress: Address of the liquidity provider
         /// @param xInsureVault: xINSURE vault containing tokens to burn
         /// @return FungibleToken vault with redeemed capital
-        access(all) fun redeemCapital(lpAddress: Address, xInsureVault: @XINSURE.Vault): @{FungibleToken.Vault} {
+        access(all) fun redeemCapital(lpAddress: Address, xInsureVault: @XINSURE.Vault): @XINSURE.Vault {
             if !InsurancePool.poolActive {
                 panic("Pool is not active")
             }
@@ -158,7 +160,7 @@ access(all) contract InsurancePool {
         /// @param farmerAddress: Address of the farmer paying premium
         /// @param policyId: Unique policy identifier
         /// @param tokenVault: FungibleToken vault containing premium payment
-        access(all) fun collectPremium(farmerAddress: Address, policyId: UInt64, tokenVault: @{FungibleToken.Vault}) {
+        access(all) fun collectPremium(farmerAddress: Address, policyId: UInt64, tokenVault: @XINSURE.Vault) {
             if !InsurancePool.poolActive {
                 panic("Pool is not active")
             }
@@ -192,7 +194,7 @@ access(all) contract InsurancePool {
             policyId: UInt64,
             payoutAmount: UFix64,
             reason: String
-        ): @{FungibleToken.Vault} {
+        ): @XINSURE.Vault {
             if !InsurancePool.poolActive {
                 panic("Pool is not active")
             }
@@ -251,7 +253,7 @@ access(all) contract InsurancePool {
         }
 
         /// Return tokens to pool (used for failed payout scenarios)
-        access(all) fun returnTokensToPool(vault: @{FungibleToken.Vault}) {
+        access(all) fun returnTokensToPool(vault: @XINSURE.Vault) {
             let amount = vault.balance
             self.tokenVault.deposit(from: <-vault)
             InsurancePool.totalPoolValue = InsurancePool.totalPoolValue + amount
@@ -348,7 +350,7 @@ access(all) contract InsurancePool {
             
             // Send payout to farmer using proper capability API
             let farmerAccount = getAccount(farmerAddress)
-            let receiverCapability = farmerAccount.capabilities.get<&{FungibleToken.Receiver}>(
+            let receiverCapability = farmerAccount.capabilities.get<&{XINSURE.Receiver}>(
                 /public/flowTokenReceiver // Using FlowToken receiver as placeholder until USDFC is available
             )
             
@@ -434,12 +436,12 @@ access(all) contract InsurancePool {
 
     /// Public interface for pool operations
     access(all) resource interface PoolPublic {
-        access(all) fun depositCapital(lpAddress: Address, tokenVault: @{FungibleToken.Vault}): @XINSURE.Vault
-        access(all) fun redeemCapital(lpAddress: Address, xInsureVault: @XINSURE.Vault): @{FungibleToken.Vault}
-        access(all) fun collectPremium(farmerAddress: Address, policyId: UInt64, tokenVault: @{FungibleToken.Vault})
-        access(all) fun getPoolBalance(): UFix64
-        access(all) fun getAvailableLiquidity(): UFix64
-    }
+            access(all) fun depositCapital(lpAddress: Address, tokenVault: @XINSURE.Vault): @XINSURE.Vault
+            access(all) fun redeemCapital(lpAddress: Address, xInsureVault: @XINSURE.Vault): @XINSURE.Vault
+            access(all) fun collectPremium(farmerAddress: Address, policyId: UInt64, tokenVault: @XINSURE.Vault)
+            access(all) fun getPoolBalance(): UFix64
+            access(all) fun getAvailableLiquidity(): UFix64
+        }
 
     /// Get current pool value
     access(all) fun getPoolValue(): UFix64 {

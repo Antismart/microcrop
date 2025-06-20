@@ -1,4 +1,4 @@
-import InsurancePool from "./InsurancePool.cdc"
+import InsurancePool from "InsurancePool.cdc"
 
 /// OracleContract - Trusted gateway for external WeatherXM data
 /// and parametric trigger logic for automated crop insurance payouts
@@ -36,6 +36,7 @@ access(all) contract OracleContract {
             self.dataSource = dataSource
         }
     }
+
 
     /// Parametric trigger thresholds for different crop types
     access(all) struct TriggerThresholds {

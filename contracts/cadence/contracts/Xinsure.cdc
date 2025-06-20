@@ -1,8 +1,7 @@
-import "FungibleToken"
-import "ViewResolver"
-import "Burner"
+import ViewResolver from "../../imports/1d7e57aa55817448/ViewResolver.cdc"
+import Burner from "../../imports/f233dcee88fe0abe/Burner.cdc"
 
-access(all) contract XINSURE: FungibleToken {
+access(all) contract XINSURE {
 
     access(all) var totalSupply: UFix64
 
@@ -21,7 +20,11 @@ access(all) contract XINSURE: FungibleToken {
     access(all) event TokensMinted(amount: UFix64, to: Address?)
     access(all) event TokensBurned(amount: UFix64, from: Address?)
 
-    access(all) resource Vault: FungibleToken.Vault {
+    access(all) resource interface Receiver {
+        access(all) fun deposit(from: @Vault)
+    }
+
+    access(all) resource Vault: Receiver {
 
         access(all) var balance: UFix64
 
@@ -29,7 +32,7 @@ access(all) contract XINSURE: FungibleToken {
             self.balance = balance
         }
 
-        access(FungibleToken.Withdraw) fun withdraw(amount: UFix64): @{FungibleToken.Vault} {
+        access(all) fun withdraw(amount: UFix64): @Vault {
             if amount <= 0.0 {
                 panic("Withdrawal amount must be positive")
             }
@@ -45,8 +48,8 @@ access(all) contract XINSURE: FungibleToken {
             return self.balance >= amount
         }
 
-        access(all) fun deposit(from: @{FungibleToken.Vault}) {
-            let vault <- from as! @XINSURE.Vault
+        access(all) fun deposit(from: @Vault) {
+            let vault <- from
             if vault.balance <= 0.0 {
                 panic("Deposit amount must be positive")
             }
@@ -64,7 +67,7 @@ access(all) contract XINSURE: FungibleToken {
             return type == Type<@XINSURE.Vault>()
         }
 
-        access(all) fun createEmptyVault(): @{FungibleToken.Vault} {
+        access(all) fun createEmptyVault(): @Vault {
             return <-create Vault(balance: 0.0)
         }
 
@@ -81,7 +84,7 @@ access(all) contract XINSURE: FungibleToken {
         }
     }
 
-    access(all) fun createEmptyVault(vaultType: Type): @{FungibleToken.Vault} {
+    access(all) fun createEmptyVault(vaultType: Type): @Vault {
         return <-create Vault(balance: 0.0)
     }
 
@@ -94,27 +97,21 @@ access(all) contract XINSURE: FungibleToken {
     }
 
     access(all) resource Minter {
-
-        access(all) fun mintTokens(amount: UFix64): @XINSURE.Vault {
+        access(all) fun mintTokens(amount: UFix64): @Vault {
             if amount <= 0.0 {
                 panic("Mint amount must be positive")
             }
-            let oldSupply = XINSURE.totalSupply
             XINSURE.totalSupply = XINSURE.totalSupply + amount
-            if XINSURE.totalSupply != oldSupply + amount {
-                panic("Total supply mismatch after mint")
-            }
-            emit TokensMinted(amount: amount, to: nil)
+            emit TokensMinted(amount: amount, to: self.owner?.address)
             return <-create Vault(balance: amount)
         }
-
-        access(all) fun burnTokens(vault: @XINSURE.Vault) {
-            if vault.balance <= 0.0 {
-                panic("Cannot burn zero tokens")
-            }
+        access(all) fun burnTokens(vault: @Vault) {
             let amount = vault.balance
+            if amount <= 0.0 {
+                panic("Burn amount must be positive")
+            }
             XINSURE.totalSupply = XINSURE.totalSupply - amount
-            emit TokensBurned(amount: amount, from: nil)
+            emit TokensBurned(amount: amount, from: self.owner?.address)
             destroy vault
         }
     }
