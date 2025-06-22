@@ -1,0 +1,365 @@
+[90m5:31PM[0m [32mINF[0m ⚙️ Using service account 0xf8d6e0586b0a20c7  [36mserviceAddress=[0mf8d6e0586b0a20c7 [36mserviceHashAlgo=[0mSHA3_256 [36mservicePrivKey=[0m1ecab8aa12524b1b4769c3a0487e21815528723ed4cafd2e97ae67726fec3711 [36mservicePubKey=[0m20f4a8ea76c6bd1e96921703740a60e117947014f7b26ee3b4c37591976357b95ee250202b001d1ae9fe7d782b7098eed02a2b33e108b92589feb261df9fa91c [36mserviceSigAlgo=[0mECDSA_P256
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mAccountV2Migration=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mBurner=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mCrypto=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mEVM=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFlowClusterQC=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFlowDKG=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFlowEpoch=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFlowFees=[0m0xe5a8b7f23e8b548f
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFlowIDTableStaking=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFlowServiceAccount=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFlowStorageFees=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFlowToken=[0m0x0ae53cb6e3f42a79
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFungibleToken=[0m0xee82856bf20e2aa6
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFungibleTokenMetadataViews=[0m0xee82856bf20e2aa6
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mFungibleTokenSwitchboard=[0m0xee82856bf20e2aa6
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mMetadataViews=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mMigration=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mNodeVersionBeacon=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mNonFungibleToken=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mRandomBeaconHistory=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 📜 Flow contract                              [36mViewResolver=[0m0xf8d6e0586b0a20c7
+[90m5:31PM[0m [32mINF[0m 🌱 Starting gRPC server on port 3569          [36mport=[0m3569
+[90m5:31PM[0m [32mINF[0m 🌱 Starting REST API on port 8888             [36mport=[0m8888
+[90m5:31PM[0m [32mINF[0m 🌱 Starting admin server on port 8080         [36mport=[0m8080
+[90m5:31PM[0m [32mINF[0m 🌱 Starting debugger on port 2345             [36mport=[0m2345
+[90m5:31PM[0m [32mINF[0m ✅  Started admin server on port 8080         [36mport=[0m8080
+[90m5:31PM[0m [32mINF[0m ✅  Started REST API server on port 8888      [36mport=[0m8888
+[90m5:31PM[0m [32mINF[0m ✅  Started gRPC server on port 3569          [36mport=[0m3569
+[90m5:37PM[0m [33mWRN[0m ❗  Transaction reverted                      [36mcomputationUsed=[0m19 [36mmemoryEstimate=[0m782447 [36mtxID=[0m0acccdde3e1f3273e7d15648b200754f2113d382225f9f57123a419784d5fafb
+[90m5:37PM[0m [33mWRN[0m [1;31mERR[0m [2m[0acccd][0m [Error Code: 1101] error caused by: 1 error occurred:
+	* transaction execute failed: [Error Code: 1101] cadence runtime error: Execution failed:
+  --> 0acccdde3e1f3273e7d15648b200754f2113d382225f9f57123a419784d5fafb:18:28
+   |
+18 |         let xInsureVault <- self.poolRef.depositCapital(
+19 |             lpAddress: self.poolRef.owner?.address ?? panic("Could not get LP address"),
+20 |             tokenVault: <-self.depositVault
+21 |         )
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  --> f8d6e0586b0a20c7.InsurancePool:94:32
+   |
+94 |             let xInsureToMint = self.calculateXInsureToMint(usdcAmount: depositAmount)
+   |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: internal error: unexpected: division by zero
+goroutine 362 [running]:
+runtime/debug.Stack()
+	runtime/debug/stack.go:26 +0x5e
+github.com/onflow/cadence/errors.NewUnexpectedErrorFromCause(...)
+	github.com/onflow/cadence@v1.3.4/errors/errors.go:164
+github.com/onflow/cadence/errors.NewUnexpectedError({0x2cce465?, 0x271cb80?}, {0xc00204dc88?, 0x1db?, 0x343f5e0?})
+	github.com/onflow/cadence@v1.3.4/errors/errors.go:158 +0x68
+github.com/onflow/cadence/interpreter.asCadenceError({0x271cb80?, 0x342f670})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter.go:572 +0x96
+github.com/onflow/cadence/interpreter.(*Interpreter).RecoverErrors(0xc0034442a0, 0x30fba50)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter.go:539 +0x4e
+panic({0x271cb80?, 0x342f670?})
+	runtime/panic.go:792 +0x132
+math/big.nat.div({0xc00108a8d0?, 0x4798ba?, 0x40a1d2?}, {0x0?, 0xc00204dfd8?, 0x123944b?}, {0xc00108a8d0?, 0x20?, 0x8080808080803f?}, {0x0, ...})
+	math/big/natdiv.go:520 +0x32e
+math/big.(*Int).QuoRem(0xc00204e068, 0xc00204e068, 0xc00204e138, 0xc00204e010)
+	math/big/int.go:293 +0x7b
+math/big.(*Int).Div(0xc00204e068, 0xc00204e158?, 0xc000b04e20?)
+	math/big/int.go:304 +0x38
+github.com/onflow/cadence/interpreter.UFix64Value.Div.func1()
+	github.com/onflow/cadence@v1.3.4/interpreter/value_ufix64.go:288 +0x57
+github.com/onflow/cadence/interpreter.NewUFix64Value({0x343e1e0?, 0xc0034442a0?}, 0xc00204e120?)
+	github.com/onflow/cadence@v1.3.4/interpreter/value_ufix64.go:63 +0x56
+github.com/onflow/cadence/interpreter.UFix64Value.Div(0xc00204e220?, 0xc0034442a0, {0x3497e00?, 0x34be180?}, {{0x3466280?, 0xc00198cb58?}, {0x344ec28?, 0xc001c989c0?}})
+	github.com/onflow/cadence@v1.3.4/interpreter/value_ufix64.go:293 +0x138
+github.com/onflow/cadence/interpreter.(*Interpreter).VisitBinaryExpression(0xc0034442a0, 0xc001c989c0)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_expression.go:498 +0x1909
+github.com/onflow/cadence/ast.AcceptExpression[...]({0x3476500?, 0xc001c989c0}, {0x348e430, 0xc0034442a0})
+	github.com/onflow/cadence@v1.3.4/ast/visitor.go:275 +0x3c7
+github.com/onflow/cadence/interpreter.(*Interpreter).evalExpression(0xc0034442a0, {0x3476500, 0xc001c989c0})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_expression.go:391 +0x37
+github.com/onflow/cadence/interpreter.(*Interpreter).VisitReturnStatement(0xc0034442a0, 0xc000821300)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:78 +0x45
+github.com/onflow/cadence/ast.AcceptStatement[...]({0x346d830?, 0xc000821300}, {0x3489b40, 0xc0034442a0})
+	github.com/onflow/cadence@v1.3.4/ast/visitor.go:118 +0x24a
+github.com/onflow/cadence/interpreter.(*Interpreter).evalStatement(0xc0034442a0, {0x346d830, 0xc000821300})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:56 +0x14d
+github.com/onflow/cadence/interpreter.(*Interpreter).visitStatements(0xc0034442a0, {0xc0008212c0?, 0x3491620?, 0x3482050?})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:62 +0x52
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeInterpretedFunctionActivated.func2()
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:206 +0x27
+github.com/onflow/cadence/interpreter.(*Interpreter).visitFunctionBody(0xc0034442a0, {0x0, 0x0, 0x0}, {0x0, 0x0, 0x20?}, 0xc00204e8f0, {0x0, 0x0, ...}, ...)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter.go:830 +0x1a7
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeInterpretedFunctionActivated(0xc0034442a0, 0xc002a6eb00?, {0xc0012c9740?, 0x1?, 0xc00198cb58?}, {{0x3466280?, 0xc00198cb58?}, {0x344edb8?, 0xc0009f07e0?}})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:202 +0x1f3
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeInterpretedFunction(0xc0034442a0, 0xc002a6eb00, {{{0x3466280, 0xc00198cb58}, {0x344edb8, 0xc0009f07e0}}, 0xc00131c150, 0x0, 0xc001f06460, 0xc0034442a0, ...})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:180 +0x1eb
+github.com/onflow/cadence/interpreter.(*InterpretedFunctionValue).invoke(0xc0010d9dc0?, {{{0x3466280, 0xc00198cb58}, {0x344edb8, 0xc0009f07e0}}, 0xc00131c150, 0x0, 0xc001f06460, 0xc0034442a0, {0xc0012c9740, ...}, ...})
+	github.com/onflow/cadence@v1.3.4/interpreter/value_function.go:125 +0x3f
+github.com/onflow/cadence/interpreter.BoundFunctionValue.invoke({{0x3485b38, 0xc002a6eb00}, 0x0, {0x3486a10, 0xc00131c150}, 0x0}, {{{0x3466280, 0xc00198cb58}, {0x344edb8, 0xc0009f07e0}}, ...})
+	github.com/onflow/cadence@v1.3.4/interpreter/value_function.go:461 +0x255
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeFunctionValue(0xc0034442a0, {0x34856a0, 0xc00131c180}, {0xc0012c9730?, 0x1?, 0xc0009790e0?}, {0xc0012c9720?, 0x1?, 0x344ec28?}, {0xc001f06470, ...}, ...)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:128 +0x19d
+github.com/onflow/cadence/interpreter.(*Interpreter).visitInvocationExpressionWithImplicitArgument(0xc0034442a0, 0xc0009f07e0, 0x0)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_expression.go:1211 +0x772
+github.com/onflow/cadence/interpreter.(*Interpreter).VisitInvocationExpression(0x40000000198cb58?, 0x74f90c3a8e98?)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_expression.go:1124 +0x15
+github.com/onflow/cadence/ast.AcceptExpression[...]({0x3476140?, 0xc0009f07e0}, {0x348e430, 0xc0034442a0})
+	github.com/onflow/cadence@v1.3.4/ast/visitor.go:245 +0x28a
+github.com/onflow/cadence/interpreter.(*Interpreter).evalExpression(0xc0034442a0, {0x3476140, 0xc0009f07e0})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_expression.go:391 +0x37
+github.com/onflow/cadence/interpreter.(*Interpreter).assignmentGetterSetter.func1(0xa0?)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_expression.go:54 +0x1f
+github.com/onflow/cadence/interpreter.(*Interpreter).visitVariableDeclaration(0xc0034442a0, 0xc002bffb80, 0x0)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:505 +0x1d2
+github.com/onflow/cadence/interpreter.(*Interpreter).VisitVariableDeclaration(0xc0034442a0, 0xc002bffb80)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:462 +0x1f
+github.com/onflow/cadence/ast.AcceptStatement[...]({0x346db50?, 0xc002bffb80}, {0x3489b40, 0xc0034442a0})
+	github.com/onflow/cadence@v1.3.4/ast/visitor.go:151 +0x44a
+github.com/onflow/cadence/interpreter.(*Interpreter).evalStatement(0xc0034442a0, {0x346db50, 0xc002bffb80})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:56 +0x14d
+github.com/onflow/cadence/interpreter.(*Interpreter).visitStatements(0xc0034442a0, {0xc0023ae900?, 0x3491620?, 0xc002b830b0?})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:62 +0x52
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeInterpretedFunctionActivated.func2()
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:206 +0x27
+github.com/onflow/cadence/interpreter.(*Interpreter).visitFunctionBody(0xc0034442a0, {0x0, 0x0, 0x0}, {0x0, 0x0, 0x20?}, 0xc00204f700, {0x0, 0x0, ...}, ...)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter.go:830 +0x1a7
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeInterpretedFunctionActivated(0xc0034442a0, 0xc002a6e900?, {0xc001f0e920?, 0x2?, 0xc001105ce0?}, {{0x3466580?, 0xc001105ce0?}, {0x344edb8?, 0xc000b0e930?}})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:202 +0x1f3
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeInterpretedFunction(0xc0034442a0, 0xc002a6e900, {{{0x3466580, 0xc001105ce0}, {0x344edb8, 0xc000b0e930}}, 0xc0012c9520, 0x0, 0xc0011d0e10, 0xc003444240, ...})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:180 +0x1eb
+github.com/onflow/cadence/interpreter.(*InterpretedFunctionValue).invoke(0xc0010d9dc0?, {{{0x3466580, 0xc001105ce0}, {0x344edb8, 0xc000b0e930}}, 0xc0012c9520, 0x0, 0xc0011d0e10, 0xc003444240, {0xc001f0e920, ...}, ...})
+	github.com/onflow/cadence@v1.3.4/interpreter/value_function.go:125 +0x3f
+github.com/onflow/cadence/interpreter.BoundFunctionValue.invoke({{0x3485b38, 0xc002a6e900}, 0x0, {0x3486ac0, 0xc000a9f640}, 0x0}, {{{0x3466580, 0xc001105ce0}, {0x344edb8, 0xc000b0e930}}, ...})
+	github.com/onflow/cadence@v1.3.4/interpreter/value_function.go:461 +0x255
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeFunctionValue(0xc003444240, {0x34856a0, 0xc00185dbf0}, {0xc001f0e8e0?, 0x2?, 0xc00204fd38?}, {0xc001f0e8c0?, 0x2?, 0x41103b?}, {0xc001e89cc0, ...}, ...)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:128 +0x19d
+github.com/onflow/cadence/interpreter.(*Interpreter).visitInvocationExpressionWithImplicitArgument(0xc003444240, 0xc000b0e930, 0x0)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_expression.go:1211 +0x772
+github.com/onflow/cadence/interpreter.(*Interpreter).VisitInvocationExpression(0x40000000215c940?, 0x74f90c3a8e98?)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_expression.go:1124 +0x15
+github.com/onflow/cadence/ast.AcceptExpression[...]({0x3476140?, 0xc000b0e930}, {0x348e430, 0xc003444240})
+	github.com/onflow/cadence@v1.3.4/ast/visitor.go:245 +0x28a
+github.com/onflow/cadence/interpreter.(*Interpreter).evalExpression(0xc003444240, {0x3476140, 0xc000b0e930})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_expression.go:391 +0x37
+github.com/onflow/cadence/interpreter.(*Interpreter).assignmentGetterSetter.func1(0x40?)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_expression.go:54 +0x1f
+github.com/onflow/cadence/interpreter.(*Interpreter).visitVariableDeclaration(0xc003444240, 0xc002bff970, 0x0)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:505 +0x1d2
+github.com/onflow/cadence/interpreter.(*Interpreter).VisitVariableDeclaration(0xc003444240, 0xc002bff970)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:462 +0x1f
+github.com/onflow/cadence/ast.AcceptStatement[...]({0x346db50?, 0xc002bff970}, {0x3489b40, 0xc003444240})
+	github.com/onflow/cadence@v1.3.4/ast/visitor.go:151 +0x44a
+github.com/onflow/cadence/interpreter.(*Interpreter).evalStatement(0xc003444240, {0x346db50, 0xc002bff970})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:56 +0x14d
+github.com/onflow/cadence/interpreter.(*Interpreter).visitStatements(0xc003444240, {0xc001b47e60?, 0x3491620?, 0xc00185dad0?})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_statement.go:62 +0x52
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeInterpretedFunctionActivated.func2()
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:206 +0x27
+github.com/onflow/cadence/interpreter.(*Interpreter).visitFunctionBody(0xc003444240, {0x0, 0x0, 0x0}, {0x0, 0x0, 0x3481000?}, 0xc002050510, {0x0, 0x0, ...}, ...)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter.go:830 +0x1a7
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeInterpretedFunctionActivated(0xc003444240, 0x3481000?, {0x0?, 0x0?, 0x0?}, {{0x0?, 0x0?}, {0x0?, 0x0?}})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:202 +0x1f3
+github.com/onflow/cadence/interpreter.(*Interpreter).invokeInterpretedFunction(0xc003444240, 0xc00121e900, {{{0x0, 0x0}, {0x0, 0x0}}, 0xc0011d1430, 0x0, 0x0, 0xc003444240, ...})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_invocation.go:180 +0x1eb
+github.com/onflow/cadence/interpreter.(*InterpretedFunctionValue).invoke(...)
+	github.com/onflow/cadence@v1.3.4/interpreter/value_function.go:125
+github.com/onflow/cadence/interpreter.(*Interpreter).declareTransactionEntryPoint.func1.1()
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_transaction.go:125 +0x79
+github.com/onflow/cadence/interpreter.(*Interpreter).visitFunctionBody(0xc003444240, {0x0, 0x0, 0x0}, {0x0, 0x0, 0xc00121e580?}, 0xc002050968, {0x0, 0x0, ...}, ...)
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter.go:830 +0x1a7
+github.com/onflow/cadence/interpreter.(*Interpreter).declareTransactionEntryPoint.func1({{{0x0, 0x0}, {0x0, 0x0}}, 0xc0011d1430, 0x0, 0x0, 0xc003444240, {0xc001e9ead0, 0x1, ...}, ...})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter_transaction.go:142 +0x3ca
+github.com/onflow/cadence/interpreter.(*HostFunctionValue).invoke(0x2?, {{{0x0, 0x0}, {0x0, 0x0}}, 0x0, 0x0, 0x0, 0xc003444240, {0xc001e9eac0, ...}, ...})
+	github.com/onflow/cadence@v1.3.4/interpreter/value_function.go:259 +0x35
+github.com/onflow/cadence/interpreter.(*Interpreter).InvokeExternally(0xc003444240, {0x3485550, 0xc002168990}, 0x3481000?, {0xc001e9eaa0?, 0x2?, 0xc00074cdc0?})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter.go:490 +0x3bd
+github.com/onflow/cadence/interpreter.(*Interpreter).InvokeTransaction(0xc003444240, 0x1?, {0xc001e9eaa0, 0x2, 0x2})
+	github.com/onflow/cadence@v1.3.4/interpreter/interpreter.go:532 +0x24a
+github.com/onflow/cadence/runtime.(*interpreterTransactionExecutor).preprocess.(*interpreterTransactionExecutor).transactionExecutionFunction.func4(0xc003444240)
+	github.com/onflow/cadence@v1.3.4/runtime/transaction_executor.go:305 +0x250
+github.com/onflow/cadence/runtime.(*interpreterEnvironment).Interpret.func1()
+	github.com/onflow/cadence@v1.3.4/runtime/environment.go:1208 +0x7f
+github.com/onflow/cadence/runtime.reportMetric(0xc002050fb8, {0x74f90c3b5668?, 0xc000c5c480}, 0xc002050fa0)
+	github.com/onflow/cadence@v1.3.4/runtime/runtime.go:202 +0x68
+github.com/onflow/cadence/runtime.(*interpreterEnvironment).Interpret(0xc001006540, {0x3466580, 0xc001105ce0}, 0x41bcd4?, 0xc0016fd5c0)
+	github.com/onflow/cadence@v1.3.4/runtime/environment.go:1202 +0xd6
+github.com/onflow/cadence/runtime.(*interpreterTransactionExecutor).execute(0xc000e51950)
+	github.com/onflow/cadence@v1.3.4/runtime/transaction_executor.go:262 +0x17f
+github.com/onflow/cadence/runtime.(*interpreterTransactionExecutor).Execute.func1()
+	github.com/onflow/cadence@v1.3.4/runtime/transaction_executor.go:79 +0x1c
+sync.(*Once).doSlow(0xffffffffffffffff?, 0xc0011d0f30?)
+	sync/once.go:78 +0xab
+sync.(*Once).Do(...)
+	sync/once.go:69
+github.com/onflow/cadence/runtime.(*interpreterTransactionExecutor).Execute(0xc000e51950)
+	github.com/onflow/cadence@v1.3.4/runtime/transaction_executor.go:78 +0x3b
+github.com/onflow/flow-go/fvm/runtime.WrappedCadenceExecutor.Execute({{0x34566a0?, 0xc000e51950?}})
+	github.com/onflow/flow-go@v0.40.1/fvm/runtime/wrapped_cadence_runtime.go:84 +0x22
+github.com/onflow/flow-go/fvm.(*transactionExecutor).normalExecution(0xc002b21508)
+	github.com/onflow/flow-go@v0.40.1/fvm/transactionInvoker.go:391 +0x15a
+github.com/onflow/flow-go/fvm.(*transactionExecutor).ExecuteTransactionBody(0xc002b21508)
+	github.com/onflow/flow-go@v0.40.1/fvm/transactionInvoker.go:287 +0xc7
+github.com/onflow/flow-go/fvm.(*transactionExecutor).execute(0xc002b21508?)
+	github.com/onflow/flow-go@v0.40.1/fvm/transactionInvoker.go:260 +0x1c
+github.com/onflow/flow-go/fvm.(*transactionExecutor).Execute(0xc002b21508)
+	github.com/onflow/flow-go@v0.40.1/fvm/transactionInvoker.go:147 +0x18
+github.com/onflow/flow-go/fvm.Run({0x34624e0, 0xc002b21508})
+	github.com/onflow/flow-go@v0.40.1/fvm/fvm.go:84 +0x9e
+github.com/onflow/flow-go/fvm.(*VirtualMachine).Run(_, {0x0, 0x1, 0x186a0, 0xffffffffffffffff, 0x3e80, 0xf424000, 0x1312d00, {0x1, 0x1, ...}, ...}, ...)
+	github.com/onflow/flow-go@v0.40.1/fvm/fvm.go:186 +0x4c5
+github.com/onflow/flow-emulator/emulator.(*pendingBlock).ExecuteNextTransaction(_, _, {0x0, 0x1, 0x186a0, 0xffffffffffffffff, 0x3e80, 0xf424000, 0x1312d00, {0x1, ...}, ...})
+	github.com/onflow/flow-emulator@v1.4.1/emulator/pendingBlock.go:186 +0x259
+github.com/onflow/flow-emulator/emulator.(*Blockchain).executeNextTransaction(_, {0x0, 0x1, 0x186a0, 0xffffffffffffffff, 0x3e80, 0xf424000, 0x1312d00, {0x1, 0x1, ...}, ...})
+	github.com/onflow/flow-emulator@v1.4.1/emulator/blockchain.go:1304 +0x378
+github.com/onflow/flow-emulator/emulator.(*Blockchain).executeBlock(0xc000a58b08)
+	github.com/onflow/flow-emulator@v1.4.1/emulator/blockchain.go:1260 +0x198
+github.com/onflow/flow-emulator/emulator.(*Blockchain).executeAndCommitBlock(0xc000a58b08)
+	github.com/onflow/flow-emulator@v1.4.1/emulator/blockchain.go:1431 +0x2a
+github.com/onflow/flow-emulator/emulator.(*Blockchain).SendTransaction(0xc000a58b08, 0xc001006180)
+	github.com/onflow/flow-emulator@v1.4.1/emulator/blockchain.go:1184 +0x105
+github.com/onflow/flow-emulator/adapters.(*AccessAdapter).SendTransaction(0xc001466108, {0x78d32c931bd62f?, 0x37559add424b10d6?}, 0xc001006180)
+	github.com/onflow/flow-emulator@v1.4.1/adapters/access.go:601 +0x19d
+github.com/onflow/flow-go/engine/access/rpc.(*Handler).SendTransaction(0xc000a48f50, {0x345f818, 0xc0014e6e10}, 0xc0014e6e40)
+	github.com/onflow/flow-go@v0.40.1/engine/access/rpc/handler.go:280 +0x2b6
+github.com/onflow/flow/protobuf/go/flow/access._AccessAPI_SendTransaction_Handler.func1({0x345f818?, 0xc0014e6e10?}, {0x2b3d5e0?, 0xc0014e6e40?})
+	github.com/onflow/flow/protobuf/go/flow@v0.4.10/access/access_grpc.pb.go:1455 +0xce
+github.com/grpc-ecosystem/go-grpc-prometheus.init.(*ServerMetrics).UnaryServerInterceptor.func3({0x345f818, 0xc0014e6e10}, {0x2b3d5e0, 0xc0014e6e40}, 0x41c765?, 0xc001d45770)
+	github.com/grpc-ecosystem/go-grpc-prometheus@v1.2.0/server_metrics.go:107 +0x77
+github.com/onflow/flow/protobuf/go/flow/access._AccessAPI_SendTransaction_Handler({0x2c855c0, 0xc000a48f50}, {0x345f818, 0xc0014e6e10}, 0xc00142b600, 0xc0008ba390)
+	github.com/onflow/flow/protobuf/go/flow@v0.4.10/access/access_grpc.pb.go:1457 +0x143
+google.golang.org/grpc.(*Server).processUnaryRPC(0xc000ab6400, {0x345f818, 0xc00122e8d0}, 0xc0011ea060, 0xc0013626f0, 0x4c247d0, 0x0)
+	google.golang.org/grpc@v1.72.1/server.go:1405 +0x1036
+google.golang.org/grpc.(*Server).handleStream(0xc000ab6400, {0x3462a20, 0xc000b4bba0}, 0xc0011ea060)
+	google.golang.org/grpc@v1.72.1/server.go:1815 +0xb88
+google.golang.org/grpc.(*Server).serveStreams.func2.1()
+	google.golang.org/grpc@v1.72.1/server.go:1035 +0x7f
+created by google.golang.org/grpc.(*Server).serveStreams.func2 in goroutine 347
+	google.golang.org/grpc@v1.72.1/server.go:1046 +0x11d
+
+   --> f8d6e0586b0a20c7.InsurancePool:234:12
+    |
+234 |             return usdcAmount / currentValuePerXInsure
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+[90m5:39PM[0m [33mWRN[0m ❗  Transaction reverted                      [36mcomputationUsed=[0m14 [36mmemoryEstimate=[0m754814 [36mtxID=[0m8767ddb68c3e25668faa96ef74a33621fd5a47045949957b7f125932418d3818
+[90m5:39PM[0m [33mWRN[0m [1;31mERR[0m [2m[8767dd][0m [Error Code: 1101] error caused by: 1 error occurred:
+	* transaction execute failed: [Error Code: 1101] cadence runtime error: Execution failed:
+error: panic: Could not borrow pool reference
+  --> 8767ddb68c3e25668faa96ef74a33621fd5a47045949957b7f125932418d3818:11:15
+   |
+11 |             ?? panic("Could not borrow pool reference")
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+[90m5:39PM[0m [32mINF[0m [1;34mLOG:[0m "Connection test successful"
+[90m5:45PM[0m [33mWRN[0m ❗  Transaction reverted                      [36mcomputationUsed=[0m0 [36mmemoryEstimate=[0m722439 [36mtxID=[0m5870e85b2391c4b33e90cccee7795d5392020b5076e5afc7464dde8ac4fb2936
+[90m5:45PM[0m [33mWRN[0m [1;31mERR[0m [2m[5870e8][0m [Error Code: 1101] error caused by: 1 error occurred:
+	* transaction preprocess failed: [Error Code: 1101] cadence runtime error: Execution failed:
+error: mismatched types
+  --> 5870e85b2391c4b33e90cccee7795d5392020b5076e5afc7464dde8ac4fb2936:17:74
+   |
+17 |         let minterCap = contractAccount.capabilities.get<&XINSURE.Minter>(XINSURE.MinterStoragePath)
+   |                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `PublicPath`, got `StoragePath`
+
+
+
+[90m5:45PM[0m [33mWRN[0m ❗  Transaction reverted                      [36mcomputationUsed=[0m0 [36mmemoryEstimate=[0m722439 [36mtxID=[0mb4522d8fcc8804d74e50b85f8892b21d8c4bd810fa5402531a8d4465d8b56d13
+[90m5:45PM[0m [33mWRN[0m [1;31mERR[0m [2m[b4522d][0m [Error Code: 1101] error caused by: 1 error occurred:
+	* transaction preprocess failed: [Error Code: 1101] cadence runtime error: Execution failed:
+error: mismatched types
+  --> b4522d8fcc8804d74e50b85f8892b21d8c4bd810fa5402531a8d4465d8b56d13:17:74
+   |
+17 |         let minterCap = contractAccount.capabilities.get<&XINSURE.Minter>(XINSURE.MinterStoragePath)
+   |                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `PublicPath`, got `StoragePath`
+
+
+
+[90m5:47PM[0m [33mWRN[0m ❗  Transaction reverted                      [36mcomputationUsed=[0m0 [36mmemoryEstimate=[0m12527489 [36mtxID=[0m717762ab7f7acda7bc6003612100d131167b13d607cc7210d1fe2e9ee20d3a51
+[90m5:47PM[0m [33mWRN[0m [1;31mERR[0m [2m[717762][0m [Error Code: 1101] error caused by: 1 error occurred:
+	* transaction execute failed: [Error Code: 1101] cadence runtime error: Execution failed:
+error: cannot deploy invalid contract
+ --> 717762ab7f7acda7bc6003612100d131167b13d607cc7210d1fe2e9ee20d3a51:3:2
+  |
+3 | 		signer.contracts.update(name: name, code: code.decodeHex())
+  | 		^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: mismatched types
+  --> f8d6e0586b0a20c7.InsurancePool:98:42
+   |
+98 |             self.tokenVault.deposit(from: <-tokenVault)
+   |                                           ^^^^^^^^^^^^ expected `XINSURE.Vault`, got `FlowToken.Vault`
+
+error: resource `InsurancePool.Pool` does not conform to resource interface `InsurancePool.PoolPublic`
+  --> f8d6e0586b0a20c7.InsurancePool:50:25
+   |
+50 |     access(all) resource Pool: PoolPublic {
+   |                          ^
+  ... 
+   |
+71 |         access(all) fun depositCapital(lpAddress: Address, tokenVault: @FlowToken.Vault): @XINSURE.Vault {
+   |                         -------------- mismatch here
+
+
+
+[90m5:47PM[0m [33mWRN[0m ❗  Transaction reverted                      [36mcomputationUsed=[0m0 [36mmemoryEstimate=[0m12527489 [36mtxID=[0m2655a9e7bba1a43c67fe14c001b608ec063b9a51dd7da0c109c611bf6759dbba
+[90m5:47PM[0m [33mWRN[0m [1;31mERR[0m [2m[2655a9][0m [Error Code: 1101] error caused by: 1 error occurred:
+	* transaction execute failed: [Error Code: 1101] cadence runtime error: Execution failed:
+error: cannot deploy invalid contract
+ --> 2655a9e7bba1a43c67fe14c001b608ec063b9a51dd7da0c109c611bf6759dbba:3:2
+  |
+3 | 		signer.contracts.update(name: name, code: code.decodeHex())
+  | 		^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: mismatched types
+  --> f8d6e0586b0a20c7.InsurancePool:98:42
+   |
+98 |             self.tokenVault.deposit(from: <-tokenVault)
+   |                                           ^^^^^^^^^^^^ expected `XINSURE.Vault`, got `FlowToken.Vault`
+
+error: resource `InsurancePool.Pool` does not conform to resource interface `InsurancePool.PoolPublic`
+  --> f8d6e0586b0a20c7.InsurancePool:50:25
+   |
+50 |     access(all) resource Pool: PoolPublic {
+   |                          ^
+  ... 
+   |
+71 |         access(all) fun depositCapital(lpAddress: Address, tokenVault: @FlowToken.Vault): @XINSURE.Vault {
+   |                         -------------- mismatch here
+
+
+
+[90m6:15PM[0m [33mWRN[0m ❗  Transaction reverted                      [36mcomputationUsed=[0m0 [36mmemoryEstimate=[0m267380 [36mtxID=[0m9b23a32636134ca8217a3773e5c15c9481abae22c91c65c520bdf5789ffda930
+[90m6:15PM[0m [33mWRN[0m [1;31mERR[0m [2m[9b23a3][0m [Error Code: 1101] error caused by: 1 error occurred:
+	* transaction preprocess failed: [Error Code: 1101] cadence runtime error: Execution failed:
+error: cannot access `issue`: function requires `Capabilities | StorageCapabilities | IssueStorageCapabilityController` authorization, but reference only has `SaveValue, LoadValue, CopyValue, BorrowValue, Storage` authorization
+  --> 9b23a32636134ca8217a3773e5c15c9481abae22c91c65c520bdf5789ffda930:18:30
+   |
+18 |             let receiverCap = acct.capabilities.storage.issue<&{XINSURE.Receiver}>(XINSURE.VaultStoragePath)
+   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: cannot access `publish`: function requires `Capabilities | PublishCapability` authorization, but reference only has `SaveValue, LoadValue, CopyValue, BorrowValue, Storage` authorization
+  --> 9b23a32636134ca8217a3773e5c15c9481abae22c91c65c520bdf5789ffda930:19:12
+   |
+19 |             acct.capabilities.publish(receiverCap, at: XINSURE.ReceiverPublicPath)
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+[90m6:22PM[0m [33mWRN[0m ❗  Transaction reverted                      [36mcomputationUsed=[0m0 [36mmemoryEstimate=[0m5131498 [36mtxID=[0mc800654bc0a4e2a9c48dc045ac59f545dcb4f19ef8fb3e2897a58672a925baf9
+[90m6:22PM[0m [33mWRN[0m [1;31mERR[0m [2m[c80065][0m [Error Code: 1101] error caused by: 1 error occurred:
+	* transaction execute failed: [Error Code: 1101] cadence runtime error: Execution failed:
+error: cannot deploy invalid contract
+ --> c800654bc0a4e2a9c48dc045ac59f545dcb4f19ef8fb3e2897a58672a925baf9:3:2
+  |
+3 | 		signer.contracts.update(name: name, code: code.decodeHex())
+  | 		^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: missing resource declaration `OracleAccess`
+ --> f8d6e0586b0a20c7.InsurancePool:5:21
+  |
+5 | access(all) contract InsurancePool {
+  |                      ^^^^^^^^^^^^^
+
+
+
