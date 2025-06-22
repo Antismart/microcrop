@@ -11,6 +11,12 @@
 			"aliases": {
 				"testing": "0000000000000007"
 			}
+		},
+		"InsurancePool": {
+			"source": "cadence/contracts/InsurancePool.cdc",
+			"aliases": {
+				"testing": "0000000000000007"
+			}
 		}
 	},
 	"dependencies": {
@@ -108,9 +114,10 @@
 	},
 	"deployments": {
 		"emulator": {
-			"micro-account": [
+			"emulator-account": [
 				"Counter",
-				"XINSURE"
+				"XINSURE",
+				"InsurancePool"
 			]
 		}
 	}
