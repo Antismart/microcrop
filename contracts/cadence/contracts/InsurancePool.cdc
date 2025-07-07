@@ -34,6 +34,42 @@ access(all) contract InsurancePool {
     access(all) event PremiumCollected(farmerAddress: Address, policyId: UInt64, amount: UFix64)
     access(all) event PayoutExecuted(farmerAddress: Address, policyId: UInt64, amount: UFix64, reason: String)
 
+    /// Oracle Access Resource for authorized payout execution
+    access(all) resource interface OracleAccess {
+        access(all) fun executePayout(farmerAddress: Address, policyId: UInt64, payoutAmount: UFix64, reason: String)
+    }
+
+    /// Oracle Access Resource Implementation
+    access(all) resource OracleAccessImpl: OracleAccess {
+        access(all) fun executePayout(farmerAddress: Address, policyId: UInt64, payoutAmount: UFix64, reason: String) {
+            // Validate payout amount
+            if payoutAmount <= 0.0 {
+                panic("Payout amount must be positive")
+            }
+            
+            // Check if pool has sufficient funds
+            let poolRef = InsurancePool.account.storage.borrow<&Pool>(from: InsurancePool.PoolStoragePath)
+                ?? panic("Could not borrow pool reference")
+            
+            if poolRef.getAvailableLiquidity() < payoutAmount {
+                panic("Insufficient pool liquidity for payout")
+            }
+            
+            // Execute payout by withdrawing from pool
+            let payoutVault <- poolRef.withdrawForPayout(amount: payoutAmount)
+            
+            // Update pool statistics
+            InsurancePool.totalPayoutsExecuted = InsurancePool.totalPayoutsExecuted + payoutAmount
+            InsurancePool.totalPoolValue = InsurancePool.totalPoolValue - payoutAmount
+            
+            // For now, we'll destroy the payout vault (in real implementation, this would be transferred to farmer)
+            // In a full implementation, you'd transfer this to the farmer's address
+            destroy payoutVault
+            
+            emit PayoutExecuted(farmerAddress: farmerAddress, policyId: policyId, amount: payoutAmount, reason: reason)
+        }
+    }
+
     /// Public interface for pool operations
     access(all) resource interface PoolPublic {
         access(all) fun depositCapital(lpAddress: Address, tokenVault: @XINSURE.Vault): @XINSURE.Vault
@@ -153,11 +189,23 @@ access(all) contract InsurancePool {
             )
         }
 
+        /// Withdraw tokens for payout (Oracle access only)
+        access(all) fun withdrawForPayout(amount: UFix64): @XINSURE.Vault {
+            if amount <= 0.0 {
+                panic("Withdrawal amount must be positive")
+            }
+            if self.tokenVault.balance < amount {
+                panic("Insufficient vault balance")
+            }
+            
+            return <- self.tokenVault.withdraw(amount: amount)
+        }
+
         /// Calculate xINSURE tokens to mint for a given deposit
         access(self) fun calculateXInsureToMint(usdcAmount: UFix64): UFix64 {
             let xInsureTotalSupply = XINSURE.totalSupply
             
-            if xInsureTotalSupply == 0.0 {
+            if xInsureTotalSupply == 0.0 || InsurancePool.totalPoolValue == 0.0 {
                 return usdcAmount // 1:1 ratio for first deposit
             }
             
@@ -196,6 +244,63 @@ access(all) contract InsurancePool {
 
         access(all) fun toggleEmergencyPause() {
             InsurancePool.emergencyPaused = !InsurancePool.emergencyPaused
+        }
+
+        /// Execute RWA investment
+        access(all) fun executeRWAInvestment(assetType: String, amount: UFix64) {
+            pre {
+                amount > 0.0: "Investment amount must be positive"
+                assetType.length > 0: "Asset type cannot be empty"
+            }
+            
+            // Check if pool has sufficient funds
+            let poolRef = InsurancePool.account.storage.borrow<&Pool>(from: InsurancePool.PoolStoragePath)
+                ?? panic("Could not borrow pool reference")
+            
+            if poolRef.getAvailableLiquidity() < amount {
+                panic("Insufficient pool liquidity for RWA investment")
+            }
+            
+            // Check RWA investment limits
+            let newRWAInvestment = InsurancePool.currentRWAInvestment + amount
+            let maxAllowedRWA = (InsurancePool.totalPoolValue * InsurancePool.maxRWAInvestmentPercentage) / 100.0
+            
+            if newRWAInvestment > maxAllowedRWA {
+                panic("RWA investment would exceed maximum allowed percentage")
+            }
+            
+            // Update RWA holdings
+            let currentHolding = InsurancePool.rwaHoldings[assetType] ?? 0.0
+            InsurancePool.rwaHoldings[assetType] = currentHolding + amount
+            InsurancePool.currentRWAInvestment = newRWAInvestment
+            
+            // In a real implementation, this would involve actual asset purchase
+            // For now, we just track the investment
+        }
+
+        /// Redeem RWA investment
+        access(all) fun redeemRWAInvestment(assetType: String, amount: UFix64) {
+            pre {
+                amount > 0.0: "Redemption amount must be positive"
+                assetType.length > 0: "Asset type cannot be empty"
+            }
+            
+            let currentHolding = InsurancePool.rwaHoldings[assetType] ?? 0.0
+            if currentHolding < amount {
+                panic("Insufficient RWA holdings for redemption")
+            }
+            
+            // Update RWA holdings
+            InsurancePool.rwaHoldings[assetType] = currentHolding - amount
+            InsurancePool.currentRWAInvestment = InsurancePool.currentRWAInvestment - amount
+            
+            // In a real implementation, this would involve actual asset sale
+            // For now, we just track the redemption
+        }
+
+        /// Create Oracle Access resource
+        access(all) fun createOracleAccess(): @OracleAccessImpl {
+            return <- create OracleAccessImpl()
         }
     }
 
