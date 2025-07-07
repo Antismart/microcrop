@@ -1,5 +1,6 @@
 import InsurancePool from "../contracts/InsurancePool.cdc"
 
+/// Transaction to trigger insurance payout
 transaction(farmer: Address, policyId: UInt64, payoutAmount: UFix64, reason: String) {
     let adminRef: &InsurancePool.Admin
 

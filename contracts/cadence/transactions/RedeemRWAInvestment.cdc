@@ -1,5 +1,6 @@
 import InsurancePool from "../contracts/InsurancePool.cdc"
 
+/// Transaction to redeem RWA investment
 transaction(assetType: String, amount: UFix64) {
     let adminRef: &InsurancePool.Admin
 
