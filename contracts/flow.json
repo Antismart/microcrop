@@ -17,6 +17,12 @@
 			"aliases": {
 				"testing": "0000000000000007"
 			}
+		},
+		"OracleContract": {
+			"source": "cadence/contracts/OracleContract.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
 		}
 	},
 	"dependencies": {
@@ -117,7 +123,8 @@
 			"emulator-account": [
 				"Counter",
 				"XINSURE",
-				"InsurancePool"
+				"InsurancePool",
+				"OracleContract"
 			]
 		}
 	}
