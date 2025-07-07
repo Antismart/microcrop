@@ -19,4 +19,11 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  define: {
+    // Ensure process is available for browser compatibility
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    include: ['axios']
+  }
 }));

@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({ onConnect, isConnected, address }) => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
