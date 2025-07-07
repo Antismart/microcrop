@@ -1,4 +1,4 @@
-import InsurancePool from "InsurancePool.cdc"
+import InsurancePool from "./InsurancePool.cdc"
 
 /// OracleContract - Trusted gateway for external WeatherXM data
 /// and parametric trigger logic for automated crop insurance payouts
@@ -127,12 +127,16 @@ access(all) contract OracleContract {
 
     /// Oracle Resource - Main oracle functionality
     access(all) resource Oracle {
-        
         /// Capability to trigger payouts on the insurance pool
-        access(self) let poolOracleAccess: Capability<&InsurancePool.OracleAccess>
+        access(self) var poolOracleAccess: Capability<&{InsurancePool.OracleAccess}>?
 
-        init(poolOracleAccess: Capability<&InsurancePool.OracleAccess>) {
-            self.poolOracleAccess = poolOracleAccess
+        init() {
+            self.poolOracleAccess = nil
+        }
+
+        /// Set the oracle access capability (called after deployment)
+        access(all) fun setOracleAccess(capability: Capability<&{InsurancePool.OracleAccess}>) {
+            self.poolOracleAccess = capability
         }
 
         /// Check all active policies for trigger conditions and execute payouts
@@ -281,17 +285,22 @@ access(all) contract OracleContract {
             OracleContract.processedTriggers[triggerKey] = true
             
             // Execute payout through insurance pool
-            let oracleAccess = self.poolOracleAccess.borrow()
-                ?? panic("Could not borrow oracle access capability")
-            
-            let reason = triggerType.concat(" conditions triggered payout for policy ").concat(policy.policyId.toString())
-            
-            oracleAccess.executePayout(
-                farmerAddress: policy.farmerAddress,
-                policyId: policy.policyId,
-                payoutAmount: payoutAmount,
-                reason: reason
-            )
+            if let capability = self.poolOracleAccess {
+                if let oracleAccess = capability.borrow() {
+                    let reason = triggerType.concat(" conditions triggered payout for policy ").concat(policy.policyId.toString())
+                    
+                    oracleAccess.executePayout(
+                        farmerAddress: policy.farmerAddress,
+                        policyId: policy.policyId,
+                        payoutAmount: payoutAmount,
+                        reason: reason
+                    )
+                } else {
+                    panic("Could not borrow oracle access capability")
+                }
+            } else {
+                panic("Oracle access capability not set - Oracle not properly initialized")
+            }
             
             emit TriggerFired(
                 farmerAddress: policy.farmerAddress,
@@ -556,7 +565,12 @@ access(all) contract OracleContract {
         }
     }
 
-    init(poolOracleAccess: Capability<&InsurancePool.OracleAccess>) {
+    /// Create data provider resource (public function)
+    access(all) fun createDataProvider(): @DataProvider {
+        return <-create DataProvider()
+    }
+
+    init() {
         // Initialize storage
         self.weatherDataByLocation = {}
         self.triggerThresholdsByCrop = {}
@@ -573,7 +587,7 @@ access(all) contract OracleContract {
         self.DataProviderStoragePath = /storage/OracleDataProvider
         
         // Create and store oracle
-        let oracle <- create Oracle(poolOracleAccess: poolOracleAccess)
+        let oracle <- create Oracle()
         self.account.storage.save(<-oracle, to: self.OracleStoragePath)
         
         // Create and store admin
