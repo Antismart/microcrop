@@ -1,487 +1,385 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import StatCard from '@/components/ui/StatCard';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Badge } from '../components/ui/badge';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { Progress } from '../components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import Header from '../components/layout/Header';
 import { 
-  DollarSign, 
   TrendingUp, 
+  TrendingDown, 
+  DollarSign, 
+  Droplets, 
   Shield, 
-  PieChart,
-  Plus,
-  Minus,
-  Target,
-  Clock,
-  Users,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight
+  Users, 
+  Activity,
+  AlertTriangle
 } from 'lucide-react';
+import { useFlowAuth } from '../hooks/useFlowAuth';
+import { useInsurancePool } from '../hooks/useInsurancePool';
 
-const Pools: React.FC = () => {
-  const [depositAmount, setDepositAmount] = useState('');
-  const [withdrawAmount, setWithdrawAmount] = useState('');
+interface PoolStats {
+  totalPoolValue: number;
+  totalPremiumsCollected: number;
+  totalPayoutsExecuted: number;
+  xInsureTotalSupply: number;
+  valuePerXInsure: number;
+  rwaTargetPercentage: number;
+  currentRWAInvestment: number;
+  availableLiquidity: number;
+  poolUtilization: number;
+  minDepositAmount: number;
+  maxPoolSize: number;
+  poolFeePercentage: number;
+  rwaHoldings?: Record<string, number>;
+}
 
-  const poolStats = {
-    totalTvl: '$2,400,000',
-    totalPools: '8',
-    averageApy: '14.2%',
-    totalEarned: '$340,000'
-  };
+export default function Pools() {
+  const { user, logIn, logOut, isLoading: authLoading, isConnected } = useFlowAuth();
+  const { getPoolStats, getRWAHoldings, depositCapital, redeemCapital, setupUserVault, txStatus } = useInsurancePool();
+  
+  const [poolStats, setPoolStats] = useState<PoolStats | null>(null);
+  const [userBalance, setUserBalance] = useState<number>(0);
+  const [depositAmount, setDepositAmount] = useState<string>('');
+  const [redeemAmount, setRedeemAmount] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('overview');
 
-  const pools = [
-    {
-      id: 1,
-      name: 'Corn Insurance Pool',
-      crop: 'Corn',
-      tvl: 850000,
-      apy: 16.5,
-      utilization: 68,
-      riskLevel: 'Medium',
-      minDeposit: 1000,
-      lockPeriod: '3 months',
-      participants: 142,
-      premiumIncome: 45200,
-      claimsPaid: 18300,
-      netReturn: 26900
-    },
-    {
-      id: 2,
-      name: 'Soybean Protection Pool',
-      crop: 'Soybeans',
-      tvl: 620000,
-      apy: 12.8,
-      utilization: 75,
-      riskLevel: 'Low',
-      minDeposit: 500,
-      lockPeriod: '6 months',
-      participants: 98,
-      premiumIncome: 32100,
-      claimsPaid: 12400,
-      netReturn: 19700
-    },
-    {
-      id: 3,
-      name: 'Wheat Security Pool',
-      crop: 'Wheat',
-      tvl: 480000,
-      apy: 18.2,
-      utilization: 82,
-      riskLevel: 'High',
-      minDeposit: 2000,
-      lockPeriod: '4 months',
-      participants: 67,
-      premiumIncome: 38500,
-      claimsPaid: 22100,
-      netReturn: 16400
-    },
-    {
-      id: 4,
-      name: 'Rice Coverage Pool',
-      crop: 'Rice',
-      tvl: 450000,
-      apy: 13.7,
-      utilization: 58,
-      riskLevel: 'Medium',
-      minDeposit: 750,
-      lockPeriod: '5 months',
-      participants: 89,
-      premiumIncome: 28900,
-      claimsPaid: 15200,
-      netReturn: 13700
+  useEffect(() => {
+    if (user) {
+      loadPoolData();
     }
-  ];
+  }, [user]);
 
-  const myPositions = [
-    {
-      poolName: 'Corn Insurance Pool',
-      deposited: 25000,
-      earned: 3200,
-      apy: 16.5,
-      duration: '2 months'
-    },
-    {
-      poolName: 'Soybean Protection Pool',
-      deposited: 15000,
-      earned: 1850,
-      apy: 12.8,
-      duration: '4 months'
-    }
-  ];
-
-  const getRiskColor = (risk: string) => {
-    switch (risk) {
-      case 'Low': return 'success';
-      case 'Medium': return 'warning';
-      case 'High': return 'destructive';
-      default: return 'default';
+  const loadPoolData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const stats = await getPoolStats();
+      const rwaHoldings = await getRWAHoldings();
+      
+      if (stats) {
+        setPoolStats({
+          ...stats,
+          rwaHoldings: rwaHoldings || {}
+        });
+      } else {
+        // Set default values if stats is null
+        setPoolStats({
+          totalPoolValue: 0,
+          totalPremiumsCollected: 0,
+          totalPayoutsExecuted: 0,
+          xInsureTotalSupply: 0,
+          valuePerXInsure: 0,
+          rwaTargetPercentage: 0,
+          currentRWAInvestment: 0,
+          availableLiquidity: 0,
+          poolUtilization: 0,
+          minDepositAmount: 100,
+          maxPoolSize: 10000000,
+          poolFeePercentage: 0,
+          rwaHoldings: rwaHoldings || {}
+        });
+      }
+      
+      // Mock user balance for now
+      setUserBalance(1000);
+    } catch (err) {
+      setError('Failed to load pool data. Please try again.');
+      console.error('Error loading pool data:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getUtilizationColor = (utilization: number) => {
-    if (utilization > 80) return 'text-destructive';
-    if (utilization > 60) return 'text-warning';
-    return 'text-success';
+  const handleDeposit = async () => {
+    if (!depositAmount || isNaN(Number(depositAmount))) {
+      setError('Please enter a valid deposit amount');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Setup user vault if needed
+      await setupUserVault();
+      
+      // Deposit capital
+      await depositCapital(Number(depositAmount));
+      
+      // Reload pool data
+      await loadPoolData();
+      
+      setDepositAmount('');
+    } catch (err) {
+      setError('Failed to deposit capital. Please try again.');
+      console.error('Error depositing capital:', err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleRedeem = async () => {
+    if (!redeemAmount || isNaN(Number(redeemAmount))) {
+      setError('Please enter a valid redeem amount');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      await redeemCapital(Number(redeemAmount));
+      
+      // Reload pool data
+      await loadPoolData();
+      
+      setRedeemAmount('');
+    } catch (err) {
+      setError('Failed to redeem capital. Please try again.');
+      console.error('Error redeeming capital:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (authLoading || !user) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container py-8 space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Liquidity Pools</h1>
-          <p className="text-muted-foreground">
-            Provide liquidity to earn yield from insurance premiums and RWA investments
-          </p>
+    <div className="min-h-screen bg-background">
+      <Header 
+        onConnect={logIn}
+        isConnected={isConnected} 
+        address={user?.addr}
+      />
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Insurance Pools</h1>
+            <p className="text-gray-600 mt-2">Manage liquidity and earn returns</p>
+          </div>
+          <Button onClick={loadPoolData} disabled={loading}>
+            <Activity className="h-4 w-4 mr-2" />
+            {loading ? 'Loading...' : 'Refresh'}
+          </Button>
         </div>
-        <Button variant="hero" size="lg">
-          <Plus className="h-4 w-4 mr-2" />
-          New Position
-        </Button>
+
+      {error && (
+        <Alert className="mb-6 border-red-200 bg-red-50">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {txStatus.status !== 'idle' && (
+        <Alert className={`mb-6 ${
+          txStatus.status === 'success' ? 'border-green-200 bg-green-50' :
+          txStatus.status === 'error' ? 'border-red-200 bg-red-50' :
+          'border-blue-200 bg-blue-50'
+        }`}>
+          <AlertDescription>
+            {txStatus.status === 'pending' && 'Transaction in progress...'}
+            {txStatus.status === 'success' && 'Transaction completed successfully!'}
+            {txStatus.status === 'error' && `Transaction failed: ${txStatus.error}`}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Pool Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Liquidity</CardTitle>
+            <Droplets className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${poolStats?.totalPoolValue.toLocaleString() || '0'}
+            </div>
+            <p className="text-xs text-gray-600">
+              Available: ${poolStats?.availableLiquidity.toLocaleString() || '0'}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pool Utilization</CardTitle>
+            <TrendingUp className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{poolStats?.poolUtilization || 0}%</div>
+            <Progress value={poolStats?.poolUtilization || 0} className="mt-2" />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Coverage</CardTitle>
+            <Shield className="h-4 w-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${poolStats?.totalPremiumsCollected.toLocaleString() || '0'}
+            </div>
+            <p className="text-xs text-gray-600">Active policies</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Participants</CardTitle>
+            <Users className="h-4 w-4 text-orange-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{Math.round(poolStats?.xInsureTotalSupply || 0)}</div>
+            <p className="text-xs text-gray-600">Active LPs</p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Pool Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total TVL"
-          value={poolStats.totalTvl}
-          change="+15.3%"
-          changeType="positive"
-          icon={DollarSign}
-          variant="accent"
-        />
-        <StatCard
-          title="Active Pools"
-          value={poolStats.totalPools}
-          change="+2 new"
-          changeType="positive"
-          icon={Shield}
-        />
-        <StatCard
-          title="Average APY"
-          value={poolStats.averageApy}
-          change="+2.1%"
-          changeType="positive"
-          icon={TrendingUp}
-          variant="secondary"
-        />
-        <StatCard
-          title="Total Earned"
-          value={poolStats.totalEarned}
-          change="+18.2%"
-          changeType="positive"
-          icon={Target}
-        />
-      </div>
-
-      <Tabs defaultValue="pools" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 max-w-md">
-          <TabsTrigger value="pools">All Pools</TabsTrigger>
-          <TabsTrigger value="positions">My Positions</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview">Pool Overview</TabsTrigger>
+          <TabsTrigger value="deposit">Deposit</TabsTrigger>
+          <TabsTrigger value="redeem">Redeem</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="pools" className="space-y-6">
+        
+        <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {pools.map((pool) => (
-              <Card key={pool.id} className="hover-lift shadow-card">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="h-12 w-12 gradient-primary rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold text-lg">
-                          {pool.crop[0]}
-                        </span>
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">{pool.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{pool.crop} Insurance</p>
-                      </div>
-                    </div>
-                    <Badge variant={getRiskColor(pool.riskLevel) as any}>
-                      {pool.riskLevel} Risk
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-muted/30 rounded-lg">
-                      <p className="text-sm text-muted-foreground">TVL</p>
-                      <p className="font-bold">${(pool.tvl / 1000).toFixed(0)}K</p>
-                    </div>
-                    <div className="text-center p-3 bg-muted/30 rounded-lg">
-                      <p className="text-sm text-muted-foreground">APY</p>
-                      <p className="font-bold text-success">{pool.apy}%</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Utilization</span>
-                      <span className={`text-sm font-medium ${getUtilizationColor(pool.utilization)}`}>
-                        {pool.utilization}%
-                      </span>
-                    </div>
-                    <Progress value={pool.utilization} className="h-2" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Min Deposit:</span>
-                        <span className="font-medium">${pool.minDeposit.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Lock Period:</span>
-                        <span className="font-medium">{pool.lockPeriod}</span>
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Participants:</span>
-                        <span className="font-medium">{pool.participants}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Net Return:</span>
-                        <span className="font-medium text-success">${pool.netReturn.toLocaleString()}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 pt-2">
-                    <Button className="flex-1" variant="hero">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Deposit
-                    </Button>
-                    <Button variant="outline" className="flex-1">
-                      View Details
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="positions" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Quick Actions */}
-            <Card className="shadow-card">
+            <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <DollarSign className="h-5 w-5 mr-2" />
-                  Quick Actions
-                </CardTitle>
+                <CardTitle>Pool Performance</CardTitle>
+                <CardDescription>Key metrics and performance indicators</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Deposit Amount</label>
-                  <Input
-                    type="number"
-                    placeholder="Enter amount..."
-                    value={depositAmount}
-                    onChange={(e) => setDepositAmount(e.target.value)}
-                  />
-                  <Button className="w-full" variant="success">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Deposit to Pool
-                  </Button>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">Total Pool Value</span>
+                  <span className="text-lg font-bold">${poolStats?.totalPoolValue.toLocaleString() || '0'}</span>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Withdraw Amount</label>
-                  <Input
-                    type="number"
-                    placeholder="Enter amount..."
-                    value={withdrawAmount}
-                    onChange={(e) => setWithdrawAmount(e.target.value)}
-                  />
-                  <Button className="w-full" variant="outline">
-                    <Minus className="h-4 w-4 mr-2" />
-                    Withdraw from Pool
-                  </Button>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">Utilization Rate</span>
+                  <Badge variant={
+                    (poolStats?.poolUtilization || 0) > 80 ? 'destructive' :
+                    (poolStats?.poolUtilization || 0) > 60 ? 'secondary' : 'default'
+                  }>
+                    {poolStats?.poolUtilization || 0}%
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">Your Balance</span>
+                  <span className="text-lg font-bold">${userBalance.toLocaleString()}</span>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Position Summary */}
-            <Card className="shadow-card">
+            <Card>
               <CardHeader>
-                <CardTitle>Position Summary</CardTitle>
+                <CardTitle>RWA Holdings</CardTitle>
+                <CardDescription>Real World Asset diversification</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span>Total Deposited</span>
-                    <span className="font-bold text-lg">$40,000</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Total Earned</span>
-                    <span className="font-bold text-lg text-success">$5,050</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Current Value</span>
-                    <span className="font-bold text-lg">$45,050</span>
-                  </div>
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold">Portfolio Return</span>
-                      <span className="font-bold text-success">+12.63%</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* My Positions */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Active Positions</h3>
-            {myPositions.map((position, index) => (
-              <Card key={index} className="shadow-card">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="h-10 w-10 gradient-secondary rounded-lg flex items-center justify-center">
-                        <Shield className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{position.poolName}</p>
-                        <p className="text-sm text-muted-foreground">Active for {position.duration}</p>
-                      </div>
-                    </div>
-                    <div className="text-right space-y-1">
-                      <div className="flex items-center space-x-4">
-                        <div className="text-center">
-                          <p className="text-sm text-muted-foreground">Deposited</p>
-                          <p className="font-semibold">${position.deposited.toLocaleString()}</p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-sm text-muted-foreground">Earned</p>
-                          <p className="font-semibold text-success">${position.earned.toLocaleString()}</p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-sm text-muted-foreground">APY</p>
-                          <p className="font-semibold">{position.apy}%</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Pool Performance */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <BarChart3 className="h-5 w-5 mr-2" />
-                  Pool Performance
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {pools.slice(0, 3).map((pool, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">{pool.name}</span>
-                      <span className="text-sm font-semibold text-success">{pool.apy}% APY</span>
-                    </div>
-                    <div className="flex space-x-2 text-xs">
-                      <div className="flex items-center">
-                        <ArrowUpRight className="h-3 w-3 text-success mr-1" />
-                        <span className="text-success">+${pool.premiumIncome.toLocaleString()} premiums</span>
-                      </div>
-                      <div className="flex items-center">
-                        <ArrowDownRight className="h-3 w-3 text-destructive mr-1" />
-                        <span className="text-destructive">-${pool.claimsPaid.toLocaleString()} claims</span>
-                      </div>
-                    </div>
-                    <Progress value={pool.apy} className="h-1" />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Risk Distribution */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <PieChart className="h-5 w-5 mr-2" />
-                  Risk Distribution
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-3 w-3 bg-success rounded-full"></div>
-                      <span className="text-sm">Low Risk Pools</span>
+                  {poolStats?.rwaHoldings && Object.entries(poolStats.rwaHoldings).map(([asset, amount]) => (
+                    <div key={asset} className="flex justify-between items-center">
+                      <span className="text-sm font-medium">{asset}</span>
+                      <span className="text-sm">${amount.toLocaleString()}</span>
                     </div>
-                    <span className="text-sm font-medium">25%</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-3 w-3 bg-warning rounded-full"></div>
-                      <span className="text-sm">Medium Risk Pools</span>
-                    </div>
-                    <span className="text-sm font-medium">50%</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-3 w-3 bg-destructive rounded-full"></div>
-                      <span className="text-sm">High Risk Pools</span>
-                    </div>
-                    <span className="text-sm font-medium">25%</span>
-                  </div>
-                </div>
-                <div className="pt-4 border-t">
-                  <p className="text-sm text-muted-foreground">
-                    Diversified risk exposure across multiple pool categories
-                  </p>
+                  ))}
+                  {(!poolStats?.rwaHoldings || Object.keys(poolStats.rwaHoldings).length === 0) && (
+                    <p className="text-sm text-gray-500">No RWA holdings found</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
           </div>
-
-          {/* Additional Analytics */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-base">Monthly Revenue</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-success">$28,500</div>
-                <p className="text-xs text-muted-foreground">+12.5% from last month</p>
-              </CardContent>
-            </Card>
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-base">Active Policies</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">156</div>
-                <p className="text-xs text-muted-foreground">Across all pools</p>
-              </CardContent>
-            </Card>
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-base">Claims Ratio</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">24%</div>
-                <p className="text-xs text-muted-foreground">Below industry average</p>
-              </CardContent>
-            </Card>
-          </div>
+        </TabsContent>
+        
+        <TabsContent value="deposit" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Deposit Capital</CardTitle>
+              <CardDescription>Add liquidity to the insurance pool and earn returns</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="deposit-amount">Deposit Amount (USD)</Label>
+                <Input
+                  id="deposit-amount"
+                  type="number"
+                  placeholder="Enter amount to deposit"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                />
+              </div>
+              <div className="text-sm text-gray-600">
+                <p>• You'll receive xINSURE tokens representing your share</p>
+                <p>• Earn returns from premium collection and RWA investments</p>
+                <p>• Minimum deposit: $100</p>
+              </div>
+              <Button 
+                onClick={handleDeposit} 
+                disabled={!depositAmount || loading}
+                className="w-full"
+              >
+                <DollarSign className="h-4 w-4 mr-2" />
+                {loading ? 'Processing...' : 'Deposit Capital'}
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="redeem" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Redeem Capital</CardTitle>
+              <CardDescription>Withdraw your liquidity from the insurance pool</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="redeem-amount">Redeem Amount (xINSURE)</Label>
+                <Input
+                  id="redeem-amount"
+                  type="number"
+                  placeholder="Enter xINSURE amount to redeem"
+                  value={redeemAmount}
+                  onChange={(e) => setRedeemAmount(e.target.value)}
+                />
+              </div>
+              <div className="text-sm text-gray-600">
+                <p>• Your xINSURE tokens will be burned</p>
+                <p>• You'll receive your share of the pool's value</p>
+                <p>• Redemption may be limited based on available liquidity</p>
+              </div>
+              <Button 
+                onClick={handleRedeem} 
+                disabled={!redeemAmount || loading}
+                className="w-full"
+                variant="outline"
+              >
+                <TrendingDown className="h-4 w-4 mr-2" />
+                {loading ? 'Processing...' : 'Redeem Capital'}
+              </Button>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
-};
-
-export default Pools;
+}
